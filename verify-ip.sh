@@ -1,5 +1,14 @@
 #!/bin/bash
-HOSTS_FILE="$HOME/etc/hosts"
+if [ $# -ne 1 ]; then
+  echo "Usage: $0 hosts_file"
+  exit 4
+fi
+HOSTS_FILE="$1"
+
+if [ ! -f "$HOSTS_FILE" ]; then
+  echo "$HOSTS_FILE does not exist"
+  exit 3
+fi
 
 verify-IP() {
   local name="$1"
@@ -17,14 +26,9 @@ verify-IP() {
       return 0
     fi
   done
-  echo "Bogus IP for $name in $HOME/etc/hosts !"
+  echo "Bogus IP for $name in $HOSTS_FILE !"
   return 1
 }
-
-if [ ! -f "$HOSTS_FILE" ]; then
-  echo "$HOSTS_FILE does not exist"
-  exit 3
-fi
 
 status=0
 while read ip name rest || [ -n "$ip" ]
